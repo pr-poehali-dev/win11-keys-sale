@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import Icon from '@/components/ui/icon';
 import { useCart } from '@/contexts/CartContext';
+import { PaymentGateways } from '@/components/PaymentGateways';
 
 const Checkout = () => {
   const { state, dispatch } = useCart();
@@ -50,6 +51,21 @@ const Checkout = () => {
     }
     
     setIsProcessing(false);
+  };
+
+  const handlePaymentComplete = async (paymentData: any) => {
+    setIsProcessing(true);
+    
+    // Simulate order processing
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Clear cart and redirect to success
+    dispatch({ type: 'CLEAR_CART' });
+    alert(`Оплата прошла успешно! 
+Способ оплаты: ${paymentData.method}
+Сумма: ${paymentData.amount} ₽
+Ключи отправлены на ${formData.email}`);
+    window.location.href = '/';
   };
 
   const confirmPayment = async () => {
@@ -158,10 +174,10 @@ const Checkout = () => {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <RadioGroup
-                      value={formData.paymentMethod}
-                      onValueChange={(value) => handleInputChange('paymentMethod', value)}
-                    >
+                    <PaymentGateways 
+                      amount={total} 
+                      onPaymentComplete={handlePaymentComplete}
+                    />
                       <div className="flex items-center space-x-3 p-4 border rounded-lg">
                         <RadioGroupItem value="sbp" id="sbp" />
                         <Label htmlFor="sbp" className="flex-1 cursor-pointer">
