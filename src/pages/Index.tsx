@@ -4,15 +4,19 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Icon from '@/components/ui/icon';
+import { Cart } from '@/components/Cart';
+import { useCart, Product } from '@/contexts/CartContext';
 
 const Index = () => {
-  const products = [
+  const { dispatch } = useCart();
+
+  const products: Product[] = [
     {
       id: 1,
       title: "Windows 11 Home",
       description: "Для домашнего использования",
-      price: "4 990 ₽",
-      originalPrice: "7 990 ₽",
+      price: 4990,
+      originalPrice: 7990,
       features: ["Безлимитная лицензия", "Цифровая доставка", "Техподдержка 24/7"],
       popular: false
     },
@@ -20,8 +24,8 @@ const Index = () => {
       id: 2,
       title: "Windows 11 Pro",
       description: "Для бизнеса и профессионалов",
-      price: "7 990 ₽",
-      originalPrice: "12 990 ₽",
+      price: 7990,
+      originalPrice: 12990,
       features: ["Расширенная безопасность", "Управление доменом", "BitLocker", "Hyper-V"],
       popular: true
     },
@@ -29,12 +33,16 @@ const Index = () => {
       id: 3,
       title: "Windows 11 Pro for Workstations",
       description: "Для рабочих станций",
-      price: "12 990 ₽",
-      originalPrice: "18 990 ₽",
+      price: 12990,
+      originalPrice: 18990,
       features: ["До 6ТБ RAM", "До 4 процессоров", "ReFS файловая система"],
       popular: false
     }
   ];
+
+  const addToCart = (product: Product) => {
+    dispatch({ type: 'ADD_ITEM', payload: product });
+  };
 
   const paymentMethods = [
     { name: "СБП", icon: "CreditCard", description: "Мгновенное зачисление" },
@@ -59,10 +67,13 @@ const Index = () => {
             <a href="#payment" className="text-microsoft-dark hover:text-microsoft-blue transition-colors">Оплата</a>
             <a href="#support" className="text-microsoft-dark hover:text-microsoft-blue transition-colors">Поддержка</a>
           </nav>
-          <Button className="bg-microsoft-blue hover:bg-microsoft-blue/90">
-            <Icon name="Phone" size={16} className="mr-2" />
-            Связаться
-          </Button>
+          <div className="flex items-center space-x-4">
+            <Cart />
+            <Button className="bg-microsoft-blue hover:bg-microsoft-blue/90">
+              <Icon name="Phone" size={16} className="mr-2" />
+              Связаться
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -120,8 +131,8 @@ const Index = () => {
                 <CardContent>
                   <div className="mb-6">
                     <div className="flex items-baseline space-x-2">
-                      <span className="text-3xl font-bold text-microsoft-blue">{product.price}</span>
-                      <span className="text-lg text-gray-400 line-through">{product.originalPrice}</span>
+                      <span className="text-3xl font-bold text-microsoft-blue">{product.price.toLocaleString()} ₽</span>
+                      <span className="text-lg text-gray-400 line-through">{product.originalPrice.toLocaleString()} ₽</span>
                     </div>
                   </div>
                   <ul className="space-y-2 mb-6">
@@ -132,9 +143,12 @@ const Index = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className={`w-full ${product.popular ? 'bg-microsoft-blue hover:bg-microsoft-blue/90' : ''}`}>
+                  <Button 
+                    onClick={() => addToCart(product)}
+                    className={`w-full ${product.popular ? 'bg-microsoft-blue hover:bg-microsoft-blue/90' : ''}`}
+                  >
                     <Icon name="ShoppingCart" size={16} className="mr-2" />
-                    Купить сейчас
+                    Добавить в корзину
                   </Button>
                 </CardContent>
               </Card>
